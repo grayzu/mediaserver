@@ -1,0 +1,68 @@
+version: "3"
+services:
+  
+  plex:
+    image: "linuxserver/plex:latest"
+    restart: always
+    volumes: # Update to match local drives
+        - /data/media_server/plex/config/:/config
+        - /data/media_server/plex/tv/:/data/tv
+        - /data/media_server/plex/movies/:/data/movies
+        - /data/media_server/plex/transcode/:/transcode
+    ports:
+     - "32400:32400"
+     - "32400:32400/udp"
+     - "32469:32469"
+     - "32469:32469/udp"
+     - "5353:5353/udp"
+     - "1900:1900/udp"
+    environment:
+      VERSION: latest
+      TZ: "America/Los_Angeles"
+      PUID: 501 # id for user who needs access to shares
+      PGID: 20 # id for group that needs access to shares
+    # links: 
+    #   - runsDb
+    
+  couchpotato:
+    image: "linuxserver/couchpotato:latest"
+    restart: always
+    volumes: # Update to match local drives
+        - /data/media_server/cp/config/:/config
+        - /data/media_server/cp/downloads/:/downloads
+        - /data/media_server/cp/movies/:/movies
+    ports:
+     - "5050:5050"
+    environment:
+      TZ: "America/Los_Angeles"
+      PUID: 501 # id for user who needs access to shares
+      PGID: 20 # id for group that needs access to shares
+
+  sonarr:
+    image: "linuxserver/sonarr:latest"
+    restart: always
+    volumes: # Update to match local drives
+        - /data/media_server/sonarr/config/:/config
+        - /data/media_server/sonarr/downloads/:/downloads
+        - /data/media_server/sonarr/tv/:/tv
+    ports:
+     - "8989:8989"
+    environment:
+      TZ: "America/Los_Angeles"
+      PUID: 501 # id for user who needs access to shares
+      PGID: 20 # id for group that needs access to shares
+
+  deluge:
+    image: "linuxserver/deluge:latest"
+    restart: always
+    network_mode: "host"
+    volumes: # Update to match local drives
+        - /data/media_server/deluge/config/:/config
+        - /data/media_server/deluge/downloads/:/downloads
+    environment:
+      TZ: "America/Los_Angeles"
+      PUID: 501 # id for user who needs access to shares
+      PGID: 20 # id for group that needs access to shares
+    # links: 
+    #   - runsApi
+    #   - web321
